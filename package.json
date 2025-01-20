@@ -1,10 +1,12 @@
 {
   "name": "web_dev",
+  "type": "module",
   "version": "1.0.0",
   "description": "The first Node.js project for a robot_dreams Web Development course",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,11 @@
   "license": "ISC",
   "bugs": {
     "email": "trusinastefan@gmail.com"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@stylistic/eslint-plugin-js": "^2.13.0",
+    "eslint": "^9.18.0",
+    "husky": "^9.1.7"
   }
 }
