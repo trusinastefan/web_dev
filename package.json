@@ -1,0 +1,19 @@
+{
+  "name": "web_dev",
+  "version": "1.0.0",
+  "description": "The first Node.js project for a robot_dreams Web Development course",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trusinastefan/web_dev.git"
+  },
+  "keywords": [],
+  "author": "Stefan Trusina",
+  "license": "ISC",
+  "bugs": {
+    "email": "trusinastefan@gmail.com"
+  }
+}
