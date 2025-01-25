@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Table</title>
+</head>
+<body>
+    <table>
+        <caption>Basic Table</caption>
+        <thead>
+            <tr>
+                <th>jméno</th>
+                <th>příjmení</th>
+                <th>email</th>
+                <th>telefon</th>
+            </tr>
+        </thead>
+        <tbody id="data">
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">Tabuľka užívateľov.</td>
+            </tr>
+        </tfoot>
+    </table>
+    <form>
+        <label for="first_name">Meno</label>
+        <input type="text" id="first_name">
+        <label for="last_name">Priezvisko</label>
+        <input type="text" id="last_name">
+        <label for="email">Email</label>
+        <input type="email" id="email">
+        <label for="phone">Telefón</label>
+        <input type="text" id="phone">
+
+        <script>
+            var addRow = () => {
+                const table = document.getElementById("data");
+                const newRow = table.insertRow(-1);
+                ["phone", "email", "last_name", "first_name"].forEach((fieldName) => {
+                    const newValue = document.getElementById(fieldName).value;
+                    const newCell = newRow.insertCell(0);
+                    let newText = document.createTextNode(newValue);
+                    newCell.appendChild(newText);
+                });
+            };
+        </script>
+        <button onclick="event.preventDefault(); addRow()">Přidej řádek</button>
+    </form>
+</body>
+</html>
