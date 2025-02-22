@@ -1,0 +1,59 @@
+thead, tfoot {
+    font-weight: bold;
+    border: solid black 1px;
+    position: relative;
+}
+
+thead::before, tfoot::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid black;
+    pointer-events: none;
+}
+
+tbody tr:nth-child(even) {
+    background-color: black;
+    color: white;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: white;
+    color: black;
+}
+
+tbody tr:hover {
+    background-color: lightgray;
+}
+
+.form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+label, input {
+    display: block;
+}
+
+.form-grp-1, .form-grp-2 {
+    flex: 1 1 100%;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .form-grp-1 {
+        flex: 1 1 48%;
+    }
+    .form-grp-2 {
+        flex: 1 1 30%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .form-grp-1, .form-grp-2 {
+        flex: 1 1 0;
+    }
+}
