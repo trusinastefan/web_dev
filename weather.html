@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Forecast</title>
+</head>
+<body>
+<script>
+    function getCitiesFromInput() {
+        let input = document.getElementById("input-cities");
+        return input.value.split(";");
+    }
+
+    async function getCityCoordinates(city) {
+        let result = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}`);
+        if (result.ok) {
+            let result_json = await result.json();
+            let {latitude, longitude} = result_json.results?.[0];
+            return {latitude: latitude, longitude: longitude};
+        } else {
+            throw new Error(`No coordinates found for ${city}!`);
+        }
+    }
+
+    async function getWeatherForCoordinates(coordinates) {
+        let result = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coordinates.latitude}&longitude=${coordinates.longitude}&forecast_days=1&daily=temperature_2m_min&daily=temperature_2m_max&timezone=CET`);
+        if (result.ok) {
+            let result_json = await result.json();
+            let min = result_json.daily?.temperature_2m_min?.[0];
+            let max = result_json.daily?.temperature_2m_max?.[0];
+            return {min: min, max: max};
+        } else {
+            throw new Error(`No weather info found for (${coordinates.latitude}, ${coordinates.longitude})!`);
+        }
+    }
+
+    function displayErrorMessage(error) {
+        let error_message_paragraph = document.createElement("p");
+        error_message_paragraph.textContent = error;
+        document.getElementById("error-messages").appendChild(error_message_paragraph);
+    }
+
+    function eraseErrorMessages() {
+        let input = document.getElementById("error-messages");
+        input.innerHTML = "";
+    }
+
+    function displayWeather(cities, cities_weather) {
+        for (let i = 0; i < cities_weather.length; i++) {
+            let city = cities?.[i];
+            let city_weather = cities_weather?.[i];
+            let error_message_paragraph = document.createElement("p");
+            error_message_paragraph.textContent = `${city}: max: ${city_weather.max} min: ${city_weather.min}`;
+            document.getElementById("weather-forecast").appendChild(error_message_paragraph);
+        }
+    }
+
+    function eraseWeather() {
+        let input = document.getElementById("weather-forecast");
+        input.innerHTML = "";
+    }
+
+    async function actionGetWeather() {
+        eraseErrorMessages();
+        eraseWeather();
+
+        let cities = getCitiesFromInput();
+        console.log(cities);
+        if (cities.length === 0 || cities.length > 3) {
+            displayErrorMessage("Your input was parsed as either 0 or more than 3 cities!");
+            return;
+        }
+        for (let i = 0; i < cities.length; i++) {
+            let city = cities[i];
+            if (city.length === 0) {
+                displayErrorMessage("One of the strings parsed from your input has length zero!");
+                return;
+            }
+        }
+
+        let cities_coordinates = cities.map(city => getCityCoordinates(city));
+        cities_coordinates = await Promise.allSettled(cities_coordinates).then(result => result);
+        for (let i = 0; i < cities_coordinates.length; i++) {
+            if (cities_coordinates[i].status === "rejected") {
+                displayErrorMessage(`Coordinates for city ${cities[i]} could not be found!`);
+                return;
+            }
+        }
+        cities_coordinates = cities_coordinates.map(x => x.value);
+
+        let cities_weather = cities_coordinates.map(coordinates => getWeatherForCoordinates(coordinates));
+        cities_weather = await Promise.allSettled(cities_weather).then(result => result);
+        for (let i = 0; i < cities_weather.length; i++) {
+            if (cities_weather[i].status === "rejected") {
+                displayErrorMessage(`Weather for city ${cities[i]} could not be found!`);
+                return;
+            }
+        }
+        cities_weather = cities_weather.map(x => x.value);
+        displayWeather(cities, cities_weather);
+    }
+
+</script>
+<form>
+    <div class="form-cities">
+        <label for="input-cities">Cities</label>
+        <input type="text" id="input-cities">
+    </div>
+    <button type="button" id="submit-cities" onclick="actionGetWeather()">Get Weather</button>
+</form>
+<div id="error-messages">
+
+</div>
+<div id="weather-forecast">
+
+</div>
+</body>
+</html>
